@@ -35,7 +35,7 @@ export default function Home() {
     setIsLoading(true);
     setIsBotResponding(false);
     try {
-      const response = await axios.post('http://localhost:3000/api', {
+      const response = await axios.post('api', {
         text: inputText
       }, {
         headers: {
