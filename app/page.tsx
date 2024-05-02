@@ -1,77 +1,21 @@
 'use client'
-import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
 
-enum Direction {
-  LTR = 'ltr',
-  RTL = 'rtl'
-}
+import { useState, useRef, useEffect } from 'react';
+import Input from '@/components/templates/Input'
 
 export default function Home() {
-  const [textareaHeight, setTextareaHeight] = useState('auto');
-  const [direction, setDirection] = useState(Direction.LTR);
-  const [userInput, setUserInput] = useState('');
   const [userMessages, setUserMessages] = useState([]);
   const [botMessages, setBotMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isBotResponding, setIsBotResponding] = useState(true);
   const [cancelClicked, setCancelClicked] = useState(false); 
+  const [copied, setCopied] = useState(false);
   const lastMessageRef = useRef(null);
-
-  const handleFirstCharChange = (event) => {
-    const textarea = event.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    setTextareaHeight(`${textarea.scrollHeight}px`);
-    const firstChar = textarea.value.trim()[0];
-    if (/[\u0600-\u06FF]/.test(firstChar)) {
-      setDirection(Direction.RTL);
-    } else {
-      setDirection(Direction.LTR);
-    }
-  };
-
-  const fetchBotReply = async (inputText) => {
-    setIsLoading(true);
-    setIsBotResponding(false);
-    try {
-      const response = await axios.post('api', {
-        text: inputText
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      setIsLoading(false);
-      setIsBotResponding(true);
-      return response.data;
-    } catch (error) {
-      setIsLoading(false);
-      setIsBotResponding(true);
-      console.error('Error fetching bot reply:', error);
-      return null;
-    }
-  };
-
-  const handleSendMessage = async () => {
-    const userMessage = userInput.trim();
-    if (userMessage !== '' && isBotResponding) {
-      setUserMessages(prevUserMessages => [...prevUserMessages, userMessage]); 
-      setUserInput('');
-      setIsBotResponding(false);
-
-      const botResponse = await fetchBotReply(userMessage);
-      if (botResponse) {
-        setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]);
-        setIsBotResponding(true); 
-      }
-    }
-  };
 
   
   const handleCancelClick = () => {
-    setCancelClicked(true);
     setIsBotResponding(true); 
+    setCancelClicked(true);
     setIsLoading(false); 
     setUserMessages(prevUserMessages => prevUserMessages.slice(0, -1));
   };
@@ -99,6 +43,35 @@ export default function Home() {
     }
   }
 
+const getMessageDirection = (message) => {
+    let direction = 'text-left';
+
+    const persianPattern = /[\u0600-\u06FF]/;
+
+    for (let i = 0; i < message.length; i++) {
+        const charCode = message.charCodeAt(i);
+        
+        if ((charCode >= 0x0041 && charCode <= 0x005A) || (charCode >= 0x0061 && charCode <= 0x007A)) {
+            direction = 'text-left';
+            break;
+        } else if (persianPattern.test(message[i])) {
+            direction = 'text-right non-english-text';
+            break; 
+        }
+    }
+
+    return direction;
+};
+
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text)
+  .then(() => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 5000);
+  })
+  .catch((error) => console.error('Error copying message:', error));
+};
+
   return (
     <>
     <div className='container mx-auto relative h-screen px-3'>
@@ -106,7 +79,7 @@ export default function Home() {
         <h1 className='text-center text-[28px]'>Devpct Chatbot</h1>
       </div>
 
-      <div className="w-full flex flex-col gap-3 text-white pb-[110px]">
+      <div className="w-full flex flex-col gap-3 text-white pb-[120px]">
         {combinedMessages.map((msg, index) => (
           <div
             key={index}
@@ -118,7 +91,23 @@ export default function Home() {
               <img src={`/${msg.sender === 'user' ? 'user' : 'devpct'}.svg`} alt="" />
               <p className='font-bold'>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
             </div>
-            <p className='p-3'>{msg.message}</p>
+            <p className={`p-3 ${getMessageDirection(msg.message)}`}>
+            {msg.message}
+            </p>
+            {msg.sender === 'bot' && (
+        <button className="pl-1 pt-2" onClick={()=>copyToClipboard(msg.message)}>
+          {copied ? (
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 13l4 4L19 7"></path>
+            </svg>
+          ) : (
+            <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          )}
+        </button>
+      )}
           </div>
         ))}
         {isLoading && (
@@ -128,41 +117,18 @@ export default function Home() {
           </div>
         )}
         {combinedMessages.length == 0 &&
-          <img src="/bg.png" className='w-[20rem] mx-auto mt-[20vh]' alt="" />
+          <img src="/bg.png" className='img w-[20rem] mx-auto mt-[20vh]' alt="" />
         }
       </div>
 
-      <div className='w-full bg-[#EDB836] p-3 fixed bottom-0 left-1'>
-        <div className="w-full flex gap-3 items-end justify-center">
-          <div className="border-black border sm:w-[665px] w-full max-h-[215px] overflow-auto px-3 pt-3 pb-2 rounded-2xl">
-            <textarea
-              placeholder='Message Devpct...'
-              className="bg-transparent text-md focus:outline-none text-black resize-none placeholder-black flex-1 w-full"
-              style={{ height: textareaHeight, direction: direction }}
-              value={userInput}
-              onChange={(e) => {
-                handleFirstCharChange(e);
-                setUserInput(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              rows={1}
-              disabled={!isBotResponding || isLoading}
-            />
-          </div>
-          <button className='w-[48px] h-[48px] bg-[#636363] rounded-full grid' onClick={handleSendMessage} disabled={!isBotResponding || isLoading}>
-            <svg className='m-auto' width="28" height="28" fill="none" stroke="#EDB836" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 19V5"></path>
-              <path d="m5 12 7-7 7 7"></path>
-            </svg>
-          </button>
-        </div>
-        <p className='text-center sm:text-[13px] text-[10px] text-[#404040] pt-2'>devpct chatbot created by Mohammad Abdollahzadeh in 2024</p>
-      </div>
+      <Input
+      setIsLoading={setIsLoading}
+      setIsBotResponding={setIsBotResponding}
+      isBotResponding={isBotResponding}
+      setUserMessages={setUserMessages}
+      setBotMessages={setBotMessages}
+      isLoading={isLoading}
+      />
     </div>
     </>
   );

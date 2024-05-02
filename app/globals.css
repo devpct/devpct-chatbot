@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanExtraBold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'IranYekan';
+  src: url('/fonts/IRANYekanExtraBlack.ttf') format('truetype');
+  font-weight: 800;
+}
+
+.non-english-text {
+  font-family: 'IranYekan', sans-serif;
+}
+
+*{
+  font-family: system-ui;
+}
+
 body {
   color: black;
   background: #edb836;
@@ -12,4 +39,17 @@ body {
     text-wrap: balance;
   }
 }
+
+.img {
+  image-rendering: crisp-edges; /* Webkit (Chrome, Safari) */
+  image-rendering: crisp-edges; /* Firefox */
+  image-rendering: optimalSpeed; /* Older versions of IE */
+  image-rendering: -moz-crisp-edges; /* Mozilla Firefox */
+  image-rendering: -webkit-optimize-contrast; /* Nexuses/Chrome Android */
+  image-rendering: -o-pixelated; /* Opera */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: pixelated; /* Supported by most modern browsers */
+  image-rendering: optimizeQuality; /* Works well in older versions of IE */
+}
+
 
