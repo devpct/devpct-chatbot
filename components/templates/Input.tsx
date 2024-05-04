@@ -9,12 +9,13 @@ enum Direction {
 }
 
 export default function Input({ setIsLoading, setIsBotResponding, isBotResponding, setUserMessages, 
-    setBotMessages, isLoading }) {
+    setBotMessages, isLoading, setCancelClicked }) {
     const [textareaHeight, setTextareaHeight] = useState('auto');
     const [direction, setDirection] = useState(Direction.LTR);
     const [userInput, setUserInput] = useState('');
   
     const fetchBotReply = async (inputText) => {
+        console.log(inputText)
         setIsLoading(true);
         setIsBotResponding(false);
         try {
@@ -27,6 +28,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
           });
           setIsLoading(false);
           setIsBotResponding(true);
+          console.log(response.data)
           return response.data;
         } catch (error) {
           setIsLoading(false);
@@ -50,19 +52,26 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
     };
 
     const handleSendMessage = async () => {
-    const userMessage = userInput.trim();
-    if (userMessage !== '' && isBotResponding) {
-        setUserMessages(prevUserMessages => [...prevUserMessages, userMessage]); 
-        setUserInput('');
-        setDirection(Direction.LTR);
-        setTextareaHeight('auto')
-        setIsBotResponding(false);
+    if(isLoading){
+      setIsBotResponding(true); 
+      setCancelClicked(true);
+      setIsLoading(false); 
+      setUserMessages(prevUserMessages => prevUserMessages.slice(0, -1));
+    }else{
+      const userMessage = userInput.trim();
+      if (userMessage !== '' && isBotResponding) {
+          setUserMessages(prevUserMessages => [...prevUserMessages, userMessage]); 
+          setUserInput('');
+          setDirection(Direction.LTR);
+          setTextareaHeight('auto')
+          setIsBotResponding(false);
 
-        const botResponse = await fetchBotReply(userMessage);
-        if (botResponse) {
-        setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]);
-        setIsBotResponding(true); 
-        }
+          const botResponse = await fetchBotReply(userMessage);
+          if (botResponse) {
+          setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]);
+          setIsBotResponding(true); 
+          }
+      }
     }
     };
 
@@ -90,10 +99,19 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
               disabled={!isBotResponding || isLoading}
             />
           </div>
-          <button className='w-[60px] h-[60px] bg-[#636363] rounded-full grid' onClick={handleSendMessage} disabled={!isBotResponding || isLoading}>
+          <button className='w-[60px] h-[60px] bg-[#636363] rounded-full grid' onClick={handleSendMessage}>
             <svg className='m-auto' width="28" height="28" fill="none" stroke="#EDB836" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 19V5"></path>
-              <path d="m5 12 7-7 7 7"></path>
+            {!isLoading ?
+            <>
+            <path d="M12 19V5"></path>
+            <path d="m5 12 7-7 7 7"></path>
+            </>
+            :
+            <>
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path>
+            <path d="M9 9h6v6H9z"></path>
+            </>
+            }
             </svg>
           </button>
         </div>

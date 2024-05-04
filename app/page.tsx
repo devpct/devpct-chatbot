@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Input from '@/components/templates/Input'
+import TypingAnimation from '@/components/modules/TypingAnimation'
 
 export default function Home() {
   const [userMessages, setUserMessages] = useState([]);
@@ -9,17 +10,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isBotResponding, setIsBotResponding] = useState(true);
   const [cancelClicked, setCancelClicked] = useState(false); 
-  const [copied, setCopied] = useState(false);
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
   const lastMessageRef = useRef(null);
-
-  
-  const handleCancelClick = () => {
-    setIsBotResponding(true); 
-    setCancelClicked(true);
-    setIsLoading(false); 
-    setUserMessages(prevUserMessages => prevUserMessages.slice(0, -1));
-  };
-  
+  const shouldScrollToBottom = useRef(true); // New ref to track whether to scroll to bottom or not
 
   useEffect(() => {
     if (cancelClicked) {
@@ -28,29 +21,26 @@ export default function Home() {
   }, [cancelClicked]);
 
   useEffect(() => {
-    if (lastMessageRef.current) {
+    if (lastMessageRef.current && shouldScrollToBottom.current) { // Scroll only if shouldScrollToBottom is true
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [userMessages, botMessages]);
+  }, [userMessages, botMessages, isLoading, shouldScrollToBottom.current]); // Added shouldScrollToBottom.current to useEffect dependencies
 
   const combinedMessages = [];
   for (let i = 0; i < Math.max(userMessages.length, botMessages.length); i++) {
     if (userMessages[i]) {
-      combinedMessages.push({ sender: 'user', message: userMessages[i] });
+      combinedMessages.push({ sender: 'user', message: userMessages[i], index: i });
     }
     if (botMessages[i]) {
-      combinedMessages.push({ sender: 'bot', message: botMessages[i] });
+      combinedMessages.push({ sender: 'bot', message: botMessages[i], index: i }); 
     }
   }
 
-const getMessageDirection = (message) => {
+  const getMessageDirection = (message) => {
     let direction = 'text-left';
-
     const persianPattern = /[\u0600-\u06FF]/;
-
     for (let i = 0; i < message.length; i++) {
         const charCode = message.charCodeAt(i);
-        
         if ((charCode >= 0x0041 && charCode <= 0x005A) || (charCode >= 0x0061 && charCode <= 0x007A)) {
             direction = 'text-left';
             break;
@@ -59,18 +49,23 @@ const getMessageDirection = (message) => {
             break; 
         }
     }
-
     return direction;
-};
+  };
 
-const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text)
-  .then(() => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), 5000);
-  })
-  .catch((error) => console.error('Error copying message:', error));
-};
+  const copyToClipboard = (text, index) => { 
+    navigator.clipboard.writeText(text)
+    .then(() => {
+      setCopiedMessageIndex(index);
+      setTimeout(() => setCopiedMessageIndex(null), 5000); 
+    })
+    .catch((error) => console.error('Error copying message:', error));
+  };
+
+  const handleLoadingChange = (loading) => {
+    shouldScrollToBottom.current = !loading; // If loading, don't scroll to bottom
+    setIsLoading(loading);
+  };
+
 
   return (
     <>
@@ -80,10 +75,10 @@ const copyToClipboard = (text) => {
       </div>
 
       <div className="w-full flex flex-col gap-3 text-white pb-[120px]">
-        {combinedMessages.map((msg, index) => (
+        {combinedMessages.map((msg) => (
           <div
-            key={index}
-            ref={index === combinedMessages.length - 1 ? lastMessageRef : null}
+            key={msg.index}
+            ref={msg.index === combinedMessages.length - 1 ? lastMessageRef : null}
             className={`lg:w-[720px] w-full rounded-2xl ${msg.sender === 'user' ? 'bg-[#2B2B2B]' : 'bg-[#636363]'} mx-auto p-3`}
             style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
           >
@@ -92,42 +87,50 @@ const copyToClipboard = (text) => {
               <p className='font-bold'>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
             </div>
             <p className={`p-3 ${getMessageDirection(msg.message)}`}>
-            {msg.message}
+              {
+              msg.sender === 'bot' ? (<TypingAnimation message={msg.message} />
+            ) :( 
+              msg.message)
+            }
             </p>
             {msg.sender === 'bot' && (
-        <button className="pl-1 pt-2" onClick={()=>copyToClipboard(msg.message)}>
-          {copied ? (
-            <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 13l4 4L19 7"></path>
-            </svg>
-          ) : (
-            <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          )}
-        </button>
-      )}
+              <button className="pl-1 pt-2" onClick={() => copyToClipboard(msg.message, msg.index)}>
+                {copiedMessageIndex === msg.index ? (
+                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 13l4 4L19 7"></path>
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
         ))}
         {isLoading && (
-          <div className="lg:w-[720px] w-full rounded-2xl bg-[#636363] mx-auto p-3">
-            <p className='p-3'>Loading...</p>
-            <button className="bg-red-500 text-white px-3 py-1 rounded-md mt-2" onClick={handleCancelClick}>Cancel</button>
-          </div>
+          <div className="lg:w-[720px] w-full h-[100px] rounded-2xl bg-[#636363] mx-auto p-3">
+            <div className="flex gap-2 items-center">
+              <img src={`/devpct.svg`} alt="" />
+              <p className='font-bold'>Devpct</p>
+            </div>
+            <div className="animated-circle m-3"></div>
+              </div>
         )}
-        {combinedMessages.length == 0 &&
+        {combinedMessages.length === 0 && (
           <img src="/bg.png" className='img w-[20rem] mx-auto mt-[20vh]' alt="" />
-        }
+        )}
       </div>
 
       <Input
-      setIsLoading={setIsLoading}
-      setIsBotResponding={setIsBotResponding}
-      isBotResponding={isBotResponding}
-      setUserMessages={setUserMessages}
-      setBotMessages={setBotMessages}
-      isLoading={isLoading}
+        setIsLoading={handleLoadingChange}
+        setIsBotResponding={setIsBotResponding}
+        isBotResponding={isBotResponding}
+        setUserMessages={setUserMessages}
+        setBotMessages={setBotMessages}
+        isLoading={isLoading}
+        setCancelClicked={setCancelClicked}
       />
     </div>
     </>

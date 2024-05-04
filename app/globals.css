@@ -53,3 +53,20 @@ body {
 }
 
 
+@keyframes increaseSize {
+  0% {
+    width: 15px; /* اندازه ابتدایی دایره */
+    height: 15px;
+  }
+  100% {
+    width: 19px; /* اندازه دایره در انتهای مدت زمان */
+    height: 19px;
+  }
+}
+
+.animated-circle {
+  animation: increaseSize 0.4s infinite alternate; /* 1s انجام شود و برعکس شود */
+  border-radius: 50%; /* تبدیل دایره به شکل دایره */
+  background-color: white; /* رنگ پس زمینه دایره */
+}
+
