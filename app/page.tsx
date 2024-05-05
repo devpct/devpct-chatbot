@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Input from '@/components/templates/Input'
 import axios from 'axios';
+import Link from 'next/link';
 
 export default function Home() {
   const [userMessages, setUserMessages] = useState([]);
@@ -92,7 +93,8 @@ export default function Home() {
   return (
     <div className='h-screen'>
     <div  className='container mx-auto relative h-screen px-3 flex flex-col '>
-      <div className='w-full bg-[#EDB836] py-3 sticky top-0'>
+      <div className='w-full bg-[#EDB836] py-3 sticky top-0 flex items-center gap-3 justify-center'>
+        <img src="/bg.png" className='img w-[3.5rem]' alt="" />
         <h1 className='text-center text-[28px]'>Devpct Chatbot</h1>
       </div>
 
@@ -176,7 +178,31 @@ export default function Home() {
               </div>
         )}
         {combinedMessages.length === 0 && (
-          <img src="/bg.png" className='img w-[20rem] mx-auto mt-[20vh]' alt="" />
+          <div className='shadow-2xl p-3 border rounded-lg border-[#2B2B2B] mx-auto sm:mt-[20vh] mt-[15vh]'>
+          <img src="/bg.png" className='img w-[12rem]' alt="" />
+          <ul className='mt-6 grid gap-3'>
+          <Link href='https://github.com/devpct'>
+          <li className='shadow-lg flex items-center gap-3 justify-center p-2 cursor-pointer border border-[#2B2B2B] rounded-lg'>
+          <svg width="30" height="30" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.25 22.5v-3.865a3.361 3.361 0 0 0-.94-2.607c3.14-.35 6.44-1.538 6.44-6.99a5.43 5.43 0 0 0-1.5-3.746 5.058 5.058 0 0 0-.09-3.765s-1.18-.35-3.91 1.478a13.397 13.397 0 0 0-7 0C6.52 1.177 5.34 1.527 5.34 1.527a5.058 5.058 0 0 0-.09 3.765 5.43 5.43 0 0 0-1.5 3.775c0 5.413 3.3 6.602 6.44 6.991a3.366 3.366 0 0 0-.94 2.577V22.5"></path>
+            <path d="M9.25 19.503c-5 1.498-5-2.496-7-2.996"></path>
+          </svg>
+          <p className='text-[20px] text-[#2B2B2B] font-bold'>Github</p>
+          </li>
+          </Link>
+          <Link href='https://www.linkedin.com/in/devpct/'>
+          <li className='shadow-lg  flex items-center gap-3 justify-center p-2 cursor-pointer border border-[#2B2B2B] rounded-lg'>
+            <svg width="30" height="30" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+            <path d="M2 9h4v12H2z"></path>
+            <path d="M4 2a2 2 0 1 0 0 4 2 2 0 1 0 0-4z"></path>
+            </svg>
+
+          <p className='text-[20px] text-[#2B2B2B] font-bold'>Linkedin</p>
+          </li>
+          </Link>
+          </ul>
+          </div>
         )}
       </div>
       
