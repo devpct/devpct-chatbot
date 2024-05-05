@@ -163,7 +163,7 @@ export default function Home() {
         {isLoading && (
           <div className="lg:w-[720px] w-full h-[100px] rounded-2xl bg-[rgb(243,243,243)] mx-auto p-3">
             <div className="flex gap-2 items-center">
-              <img src={`/devpct.svg`} alt="" />
+              <img className='border-2 rounded-full' src={`/devpct.svg`} alt="" />
               <p className='font-bold text-black'>Devpct</p>
             </div>
             <div className="animated-circle m-3"></div>
