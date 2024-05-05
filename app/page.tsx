@@ -12,7 +12,7 @@ export default function Home() {
   const [cancelClicked, setCancelClicked] = useState(false); 
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
   const lastMessageRef = useRef(null);
-  const shouldScrollToBottom = useRef(true); // New ref to track whether to scroll to bottom or not
+  const shouldScrollToBottom = useRef(true); 
 
   useEffect(() => {
     if (cancelClicked) {
@@ -21,10 +21,15 @@ export default function Home() {
   }, [cancelClicked]);
 
   useEffect(() => {
-    if (lastMessageRef.current && shouldScrollToBottom.current) { // Scroll only if shouldScrollToBottom is true
+    if (lastMessageRef.current && shouldScrollToBottom.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [userMessages, botMessages, isLoading, shouldScrollToBottom.current]); // Added shouldScrollToBottom.current to useEffect dependencies
+
+    if (isLoading) { 
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+  }, [userMessages, botMessages, isLoading, shouldScrollToBottom.current]); 
 
   const combinedMessages = [];
   for (let i = 0; i < Math.max(userMessages.length, botMessages.length); i++) {
@@ -68,8 +73,8 @@ export default function Home() {
 
 
   return (
-    <>
-    <div className='container mx-auto relative h-screen px-3'>
+    <div className='h-screen'>
+    <div  className='container mx-auto relative h-screen px-3'>
       <div className='w-full bg-[#EDB836] py-3 sticky top-0'>
         <h1 className='text-center text-[28px]'>Devpct Chatbot</h1>
       </div>
@@ -133,6 +138,6 @@ export default function Home() {
         setCancelClicked={setCancelClicked}
       />
     </div>
-    </>
+    </div>
   );
 }

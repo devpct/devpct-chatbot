@@ -1,18 +1,19 @@
-let OpenAI  = require("openai");
+const { G4F } = require("g4f");
 
 export async function POST(request: Request) {
     const inputData = await request.json();
-    
-    const openai = new OpenAI({    
-        apiKey: "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",
-    });
 
-    const completion = await openai.chat.completions.create({
-        messages: [{ role: "user", content: inputData.text }],
-        model: "gpt-3.5-turbo",
-    });
+    const g4f = new G4F();
+    const messages = [
+        { role: "user", content: inputData.text },
+    ];
+    const options = {
+        model: "gpt-4",
+    };
 
-    const botReply = completion.choices[0].message.content;
+    const text = await g4f.chatCompletion(messages, options);	
+
+    const botReply = text;
 
     const responseData = { status: 'OK', botReply: botReply };
     
@@ -20,3 +21,5 @@ export async function POST(request: Request) {
 
     return new Response(responseBody, { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
+
+

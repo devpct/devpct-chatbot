@@ -1,23 +1,25 @@
 import { useState, useEffect } from 'react';
 
 export default function TypingAnimation({ message }) {
-  const [typedMessage, setTypedMessage] = useState('');
-  const [isTypingComplete, setIsTypingComplete] = useState(true);
 
+  const [typedMessage, setTypedMessage] = useState('');
+  const [index, setIndex] = useState(0);
+  
   useEffect(() => {
-    let index = 0;
     const typingInterval = setInterval(() => {
       if (index < message.length) {
         setTypedMessage(prevTypedMessage => prevTypedMessage + message.charAt(index));
-        index++;
+        setIndex(prevIndex => prevIndex + 1);
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       } else {
-        setIsTypingComplete(false);
         clearInterval(typingInterval);
       }
-    }, 50);
-
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 10);
+  
     return () => clearInterval(typingInterval);
-  }, [message]);
+  }, [index, message]);
 
   const getMessageDirection = (message) => {
     let direction = 'text-left';
@@ -37,12 +39,9 @@ export default function TypingAnimation({ message }) {
 
   return (
     <>
-      <div className={`flex gap-2 justify-end 
-        ${getMessageDirection(typedMessage) === 'left' ? 'flex-row-reverse' : ''}`}
+      <div className={`flex gap-2  
+        ${getMessageDirection(typedMessage) === 'left' ? 'justify-start' : 'justify-end'}`}
         >
-        {isTypingComplete && (
-          <div className="animated-circle mt-1"></div>
-        )}
         <span className={`${getMessageDirection(typedMessage)}`}>{typedMessage}</span>
       </div>
     </>
