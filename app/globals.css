@@ -70,3 +70,15 @@ body {
   background-color: rgb(48, 48, 48); /* رنگ پس زمینه دایره */
 }
 
+::-webkit-scrollbar {
+  width: 5px; /* عرض اسکرولبار */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2b2b2b85; /* رنگ قسمت متحرک اسکرول */
+  border-radius: 25px; /* شکل گوشه‌های قسمت متحرک */
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent; /* رنگ پس زمینه اسکرول‌بار */
+}

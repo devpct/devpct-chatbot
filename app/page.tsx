@@ -94,12 +94,12 @@ export default function Home() {
 
   return (
     <div className='h-screen'>
-    <div  className='container mx-auto relative h-screen px-3'>
+    <div  className='container mx-auto relative h-screen px-3 flex flex-col '>
       <div className='w-full bg-[#EDB836] py-3 sticky top-0'>
         <h1 className='text-center text-[28px]'>Devpct Chatbot</h1>
       </div>
 
-      <div className="w-full flex flex-col gap-3 text-white pb-[115px]">
+      <div className="w-full flex flex-col gap-3 text-white pb-3">
         {combinedMessages.map((msg, index) => (
           <div
             key={msg.index}
@@ -109,9 +109,9 @@ export default function Home() {
           >
             <div className="flex gap-2 items-center">
               <img className={`${msg.sender === 'user' ? '' : 'border-2 rounded-full'}`} src={`/${msg.sender === 'user' ? 'user' : 'devpct'}.svg`} alt="" />
-              <p className={`font-bold ${msg.sender === 'user' ? '' : 'text-black'}`}>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
+              <p className={`font-bold ${msg.sender === 'user' ? '' : 'text-[#2B2B2B]'}`}>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
             </div>
-            <p className={`p-3 ${msg.sender === 'user' ? '' : 'text-black'} ${getMessageDirection(msg.message)}`}>
+            <p className={`p-3 ${msg.sender === 'user' ? '' : 'text-[#2B2B2B]'} ${getMessageDirection(msg.message)}`}>
               {
               msg.message
               }
@@ -164,7 +164,7 @@ export default function Home() {
           <div className="lg:w-[720px] w-full h-[100px] rounded-2xl bg-[rgb(243,243,243)] mx-auto p-3">
             <div className="flex gap-2 items-center">
               <img className='border-2 rounded-full' src={`/devpct.svg`} alt="" />
-              <p className='font-bold text-black'>Devpct</p>
+              <p className='font-bold text-[#2B2B2B]'>Devpct</p>
             </div>
             <div className="animated-circle m-3"></div>
               </div>
@@ -173,7 +173,7 @@ export default function Home() {
           <img src="/bg.png" className='img w-[20rem] mx-auto mt-[20vh]' alt="" />
         )}
       </div>
-
+      
       <Input
         setIsLoading={handleLoadingChange}
         setIsBotResponding={setIsBotResponding}
@@ -183,6 +183,7 @@ export default function Home() {
         isLoading={isLoading}
         setCancelClicked={setCancelClicked}
       />
+      
     </div>
     </div>
   );
