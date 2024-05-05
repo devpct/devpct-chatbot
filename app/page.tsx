@@ -104,14 +104,14 @@ export default function Home() {
           <div
             key={msg.index}
             ref={msg.index === combinedMessages.length - 1 ? lastMessageRef : null}
-            className={`lg:w-[720px] w-full rounded-2xl ${msg.sender === 'user' ? 'bg-[#2B2B2B]' : 'bg-[#636363]'} mx-auto p-3`}
+            className={`lg:w-[720px] w-full rounded-2xl ${msg.sender === 'user' ? 'bg-[#2B2B2B]' : 'bg-[rgb(243,243,243)]'} mx-auto p-3`}
             style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
           >
             <div className="flex gap-2 items-center">
-              <img src={`/${msg.sender === 'user' ? 'user' : 'devpct'}.svg`} alt="" />
-              <p className='font-bold'>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
+              <img className={`${msg.sender === 'user' ? '' : 'border-2 rounded-full'}`} src={`/${msg.sender === 'user' ? 'user' : 'devpct'}.svg`} alt="" />
+              <p className={`font-bold ${msg.sender === 'user' ? '' : 'text-black'}`}>{msg.sender === 'user' ? 'You' : 'Devpct'}</p>
             </div>
-            <p className={`p-3 ${getMessageDirection(msg.message)}`}>
+            <p className={`p-3 ${msg.sender === 'user' ? '' : 'text-black'} ${getMessageDirection(msg.message)}`}>
               {
               msg.message
               }
@@ -120,11 +120,11 @@ export default function Home() {
               <div className="flex gap-3 items-center pl-1 py-1">
               <button onClick={() => copyToClipboard(msg.message, msg.index)}>
                 {copiedMessageIndex === msg.index ? (
-                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="15" height="15" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 13l4 4L19 7"></path>
                   </svg>
                 ) : (
-                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="15" height="15" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
@@ -150,7 +150,7 @@ export default function Home() {
                     setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]); 
                   }
                 }}>
-                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <svg width="15" height="15" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1 4v6h6"></path>
                     <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                   </svg>
@@ -161,10 +161,10 @@ export default function Home() {
           </div>
         ))}
         {isLoading && (
-          <div className="lg:w-[720px] w-full h-[100px] rounded-2xl bg-[#636363] mx-auto p-3">
+          <div className="lg:w-[720px] w-full h-[100px] rounded-2xl bg-[rgb(243,243,243)] mx-auto p-3">
             <div className="flex gap-2 items-center">
               <img src={`/devpct.svg`} alt="" />
-              <p className='font-bold'>Devpct</p>
+              <p className='font-bold text-black'>Devpct</p>
             </div>
             <div className="animated-circle m-3"></div>
               </div>

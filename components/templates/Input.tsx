@@ -124,7 +124,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
             </svg>
           </button>
         </div>
-        <p className='text-center sm:text-[13px] text-[10px] text-[#404040] pt-2'>devpct chatbot created by Mohammad Abdollahzadeh in 2024</p>
+        <p className='text-center sm:text-[13px] text-[10px] text-[#404040] pt-2'>devpct chatbot (GPT-4)  created by Mohammad Abdollahzadeh in 2024</p>
       </div>
     </>
   );

@@ -67,6 +67,6 @@ body {
 .animated-circle {
   animation: increaseSize 0.4s infinite alternate; /* 1s انجام شود و برعکس شود */
   border-radius: 50%; /* تبدیل دایره به شکل دایره */
-  background-color: white; /* رنگ پس زمینه دایره */
+  background-color: rgb(48, 48, 48); /* رنگ پس زمینه دایره */
 }
 
