@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 enum Direction {
@@ -13,7 +13,8 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
     const [textareaHeight, setTextareaHeight] = useState('auto');
     const [direction, setDirection] = useState(Direction.LTR);
     const [userInput, setUserInput] = useState('');
-  
+    const textareaRef = useRef(null);
+
     const fetchBotReply = async (inputText) => {
         console.log(inputText)
         setIsLoading(true);
@@ -75,14 +76,22 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
     }
     };
 
+
+    useEffect(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, [isLoading]);
+
   return (
     <>
     <div className='w-full bg-[#EDB836] p-3 fixed bottom-0 left-1'>
-        <div className="w-full flex gap-3 items-end justify-center">
-          <div className="border-black border sm:w-[665px] w-full max-h-[215px] overflow-auto px-3 pt-3 pb-2 rounded-2xl">
+        <div className="w-full flex gap-2 items-end justify-center">
+          <div className="border-black border sm:w-[665px] w-[85%] max-h-[215px] overflow-auto px-4 py-2 rounded-2xl">
             <textarea
+              ref={textareaRef}
               placeholder='Message Devpct'
-              className={`bg-transparent text-md focus:outline-none text-black resize-none placeholder-black overflow-hidden py-[6px] flex-1 w-full ${/[\u0600-\u06FF]/.test(userInput) ? 'non-english-text' : ''}`}
+              className={`bg-transparent text-md focus:outline-none text-black resize-none pt-1.5 placeholder-black overflow-hidden  flex-1 w-full ${/[\u0600-\u06FF]/.test(userInput) ? 'non-english-text' : ''}`}
               style={{ height: textareaHeight, direction: direction }}
               value={userInput}
               onChange={(e) => {
@@ -99,7 +108,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
               disabled={!isBotResponding || isLoading}
             />
           </div>
-          <button className='w-[60px] h-[60px] bg-[#636363] rounded-full grid' onClick={handleSendMessage}>
+          <button className='w-[55px]  h-[55px] bg-[#2B2B2B] rounded-full grid' onClick={handleSendMessage}>
             <svg className='m-auto' width="28" height="28" fill="none" stroke="#EDB836" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             {!isLoading ?
             <>

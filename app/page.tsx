@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Input from '@/components/templates/Input'
-import TypingAnimation from '@/components/modules/TypingAnimation'
+import axios from 'axios';
 
 export default function Home() {
   const [userMessages, setUserMessages] = useState([]);
@@ -25,10 +25,7 @@ export default function Home() {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
 
-    if (isLoading) { 
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }, [userMessages, botMessages, isLoading, shouldScrollToBottom.current]); 
 
   const combinedMessages = [];
@@ -67,10 +64,33 @@ export default function Home() {
   };
 
   const handleLoadingChange = (loading) => {
-    shouldScrollToBottom.current = !loading; // If loading, don't scroll to bottom
+    shouldScrollToBottom.current = !loading;
     setIsLoading(loading);
   };
 
+    const fetchBotReply = async (inputText) => {
+      console.log(inputText)
+      setIsLoading(true);
+      setIsBotResponding(false);
+      try {
+        const response = await axios.post('api', {
+          text: inputText
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        setIsLoading(false);
+        setIsBotResponding(true);
+        console.log(response.data)
+        return response.data;
+      } catch (error) {
+        setIsLoading(false);
+        setIsBotResponding(true);
+        console.error('Error fetching bot reply:', error);
+        return null;
+      }
+  };
 
   return (
     <div className='h-screen'>
@@ -79,8 +99,8 @@ export default function Home() {
         <h1 className='text-center text-[28px]'>Devpct Chatbot</h1>
       </div>
 
-      <div className="w-full flex flex-col gap-3 text-white pb-[120px]">
-        {combinedMessages.map((msg) => (
+      <div className="w-full flex flex-col gap-3 text-white pb-[115px]">
+        {combinedMessages.map((msg, index) => (
           <div
             key={msg.index}
             ref={msg.index === combinedMessages.length - 1 ? lastMessageRef : null}
@@ -93,13 +113,12 @@ export default function Home() {
             </div>
             <p className={`p-3 ${getMessageDirection(msg.message)}`}>
               {
-              msg.sender === 'bot' ? (<TypingAnimation message={msg.message} />
-            ) :( 
-              msg.message)
-            }
+              msg.message
+              }
             </p>
             {msg.sender === 'bot' && (
-              <button className="pl-1 pt-2" onClick={() => copyToClipboard(msg.message, msg.index)}>
+              <div className="flex gap-3 items-center pl-1 py-1">
+              <button onClick={() => copyToClipboard(msg.message, msg.index)}>
                 {copiedMessageIndex === msg.index ? (
                   <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 13l4 4L19 7"></path>
@@ -111,6 +130,33 @@ export default function Home() {
                   </svg>
                 )}
               </button>
+              { index === combinedMessages.length -1 && (
+                <button onClick={async () => {
+                  const lastUserMessage = userMessages[userMessages.length - 1]; 
+                  const lastBotMessage = botMessages[botMessages.length - 1]; 
+                  setBotMessages(prevBotMessages => prevBotMessages.slice(0, -1));
+                  
+                  let botResponse = await fetchBotReply(lastUserMessage);
+                  
+                  const BotMessages = async (lastUserMessage) => {
+                    const bot = await fetchBotReply(lastUserMessage);
+                    botResponse = bot;
+                  }
+                  
+                  if (botResponse.botReply === lastBotMessage) {
+                    BotMessages(lastUserMessage);
+                  } else {
+                    console.log(BotMessages);
+                    setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]); 
+                  }
+                }}>
+                  <svg width="15" height="15" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 4v6h6"></path>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                  </svg>
+                </button>
+            )}
+              </div>
             )}
           </div>
         ))}
