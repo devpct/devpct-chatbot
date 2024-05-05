@@ -80,13 +80,12 @@ export default function Home() {
         });
         setIsLoading(false);
         setIsBotResponding(true);
-        console.log(response.data);
         return response.data;
       } catch (error) {
         setIsLoading(false);
         setIsBotResponding(true);
         console.error('Error fetching bot reply:', error);
-        return null;
+        return 'جواب با مشکل مواجه شد';
       }
   };
 

@@ -28,13 +28,12 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
           });
           setIsLoading(false);
           setIsBotResponding(true);
-          console.log(response.data);
           return response.data;
         } catch (error) {
           setIsLoading(false);
           setIsBotResponding(true);
           console.error('Error fetching bot reply:', error);
-          return null;
+          return 'جواب با مشکل مواجه شد';
         }
     };
 
@@ -82,10 +81,49 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
       }
     }, [isLoading]);
 
+    const [showButton, setShowButton] = useState(false);
+
+    useEffect(() => {
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+  
+    const handleScroll = () => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight || window.innerHeight;
+      const bottomThreshold = 100; // Adjust as needed
+  
+      if (scrollHeight - scrollTop - clientHeight < bottomThreshold) {
+        setShowButton(false);
+      } else {
+        setShowButton(true);
+      }
+    };
+  
+    const scrollToBottom = () => {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+    
   return (
     <>
-    <div className='w-full bg-[#EDB836] py-3 sticky bottom-0 left-1 mt-auto'>
-        <div className="w-full flex gap-2 items-end justify-center">
+    <div className='w-full sticky bottom-0 left-1 mt-auto'>
+    {showButton && (
+        <button
+          className='w-fit bg-[#EDB836] border border-[#2B2B2B] p-1 rounded-full shadow-lg mx-auto mb-4 sticky left-[50%] bottom-[100px]'
+          onClick={scrollToBottom}
+        >
+          <svg width="22" height="22" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+        </button>
+      )}
+      <div className="bg-[#EDB836] py-2">
+        <div className="w-full  flex gap-2 items-end justify-center">
           <div className="border-black border sm:w-[665px] w-[85%] max-h-[215px] overflow-auto px-4 py-2 rounded-2xl">
             <textarea
               ref={textareaRef}
@@ -124,6 +162,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
           </button>
         </div>
         <p className='text-center sm:text-[13px] text-[10px] text-[#404040] pt-2'>devpct chatbot (GPT-4)  created by Mohammad Abdollahzadeh in 2024</p>
+      </div>
       </div>
     </>
   );
