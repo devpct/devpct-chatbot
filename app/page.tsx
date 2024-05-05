@@ -115,8 +115,8 @@ export default function Home() {
             </p>
             {msg.sender === 'bot' && (
               <div className="flex gap-3 items-center pl-1 py-1">
-              <button onClick={() => copyToClipboard(msg.message, msg.index)}>
-                {copiedMessageIndex === msg.index ? (
+              <button onClick={() => copyToClipboard(msg.message, index)}>
+                {copiedMessageIndex === index ? (
                   <svg width="15" height="15" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 13l4 4L19 7"></path>
                   </svg>
@@ -136,7 +136,7 @@ export default function Home() {
                     let botResponse = await fetchBotReply(lastUserMessage);
                     
                     if (botResponse.botReply === lastBotMessage) {
-                      botResponse = await fetchBotReply(lastUserMessage); // Retry fetching bot reply
+                      botResponse = await fetchBotReply(lastUserMessage); 
                     }
                     
                     setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]); 
@@ -150,6 +150,20 @@ export default function Home() {
             )}
               </div>
             )}
+              {msg.sender !== 'bot' && (
+                <button className="pl-1 py-1" onClick={() => copyToClipboard(msg.message, index)}>
+                {copiedMessageIndex === index ? (
+                  <svg width="15" height="15" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 13l4 4L19 7"></path>
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="13" height="13" x="9" y="9" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                )}
+              </button>
+              )}
           </div>
         ))}
         {isLoading && (
