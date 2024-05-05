@@ -85,7 +85,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
 
   return (
     <>
-    <div className='w-full bg-[#EDB836] p-3 sticky bottom-0 left-1 mt-auto'>
+    <div className='w-full bg-[#EDB836] py-3 sticky bottom-0 left-1 mt-auto'>
         <div className="w-full flex gap-2 items-end justify-center">
           <div className="border-black border sm:w-[665px] w-[85%] max-h-[215px] overflow-auto px-4 py-2 rounded-2xl">
             <textarea
