@@ -55,30 +55,30 @@ body {
 
 @keyframes increaseSize {
   0% {
-    width: 15px; /* اندازه ابتدایی دایره */
+    width: 15px; 
     height: 15px;
   }
   100% {
-    width: 19px; /* اندازه دایره در انتهای مدت زمان */
+    width: 19px; 
     height: 19px;
   }
 }
 
 .animated-circle {
-  animation: increaseSize 0.4s infinite alternate; /* 1s انجام شود و برعکس شود */
-  border-radius: 50%; /* تبدیل دایره به شکل دایره */
-  background-color: rgb(48, 48, 48); /* رنگ پس زمینه دایره */
+  animation: increaseSize 0.4s infinite alternate; 
+  border-radius: 50%; 
+  background-color: rgb(48, 48, 48); 
 }
 
 ::-webkit-scrollbar {
-  width: 5px; /* عرض اسکرولبار */
+  width: 5px; 
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #2b2b2b85; /* رنگ قسمت متحرک اسکرول */
-  border-radius: 25px; /* شکل گوشه‌های قسمت متحرک */
+  background-color: #2b2b2b85; 
+  border-radius: 25px; 
 }
 
 ::-webkit-scrollbar-track {
-  background-color: transparent; /* رنگ پس زمینه اسکرول‌بار */
+  background-color: transparent; 
 }

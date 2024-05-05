@@ -60,7 +60,6 @@ export default function Home() {
       setCopiedMessageIndex(index);
       setTimeout(() => setCopiedMessageIndex(null), 5000); 
     })
-    .catch((error) => console.error('Error copying message:', error));
   };
 
   const handleLoadingChange = (loading) => {
@@ -69,7 +68,6 @@ export default function Home() {
   };
 
     const fetchBotReply = async (inputText) => {
-      console.log(inputText)
       setIsLoading(true);
       setIsBotResponding(false);
       try {
@@ -82,7 +80,7 @@ export default function Home() {
         });
         setIsLoading(false);
         setIsBotResponding(true);
-        console.log(response.data)
+        console.log(response.data);
         return response.data;
       } catch (error) {
         setIsLoading(false);
@@ -132,24 +130,19 @@ export default function Home() {
               </button>
               { index === combinedMessages.length -1 && (
                 <button onClick={async () => {
-                  const lastUserMessage = userMessages[userMessages.length - 1]; 
-                  const lastBotMessage = botMessages[botMessages.length - 1]; 
-                  setBotMessages(prevBotMessages => prevBotMessages.slice(0, -1));
-                  
-                  let botResponse = await fetchBotReply(lastUserMessage);
-                  
-                  const BotMessages = async (lastUserMessage) => {
-                    const bot = await fetchBotReply(lastUserMessage);
-                    botResponse = bot;
-                  }
-                  
-                  if (botResponse.botReply === lastBotMessage) {
-                    BotMessages(lastUserMessage);
-                  } else {
-                    console.log(BotMessages);
+                    const lastUserMessage = userMessages[userMessages.length - 1]; 
+                    const lastBotMessage = botMessages[botMessages.length - 1]; 
+                    setBotMessages(prevBotMessages => prevBotMessages.slice(0, -1));
+                    
+                    let botResponse = await fetchBotReply(lastUserMessage);
+                    
+                    if (botResponse.botReply === lastBotMessage) {
+                      botResponse = await fetchBotReply(lastUserMessage); // Retry fetching bot reply
+                    }
+                    
                     setBotMessages(prevBotMessages => [...prevBotMessages, botResponse.botReply]); 
-                  }
-                }}>
+                  }}>
+
                   <svg width="15" height="15" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1 4v6h6"></path>
                     <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>

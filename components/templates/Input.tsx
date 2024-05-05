@@ -16,7 +16,6 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
     const textareaRef = useRef(null);
 
     const fetchBotReply = async (inputText) => {
-        console.log(inputText)
         setIsLoading(true);
         setIsBotResponding(false);
         try {
@@ -29,7 +28,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
           });
           setIsLoading(false);
           setIsBotResponding(true);
-          console.log(response.data)
+          console.log(response.data);
           return response.data;
         } catch (error) {
           setIsLoading(false);
