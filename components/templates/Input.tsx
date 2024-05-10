@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
@@ -92,7 +90,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
       const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
       const clientHeight = document.documentElement.clientHeight || window.innerHeight;
-      const bottomThreshold = 100; // Adjust as needed
+      const bottomThreshold = 100; 
   
       if (scrollHeight - scrollTop - clientHeight < bottomThreshold) {
         setShowButton(false);
@@ -107,6 +105,17 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
         behavior: 'smooth',
       });
     }
+
+    const handleKeyPress = (event) => {
+      const isMobile = /Mobile/.test(navigator.userAgent);
+      
+      // Check if Enter key is pressed and Shift key is not pressed
+      if (event.key === 'Enter' && !event.shiftKey && !isMobile) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    };
+    
     
   return (
     <>
@@ -135,12 +144,7 @@ export default function Input({ setIsLoading, setIsBotResponding, isBotRespondin
                 handleFirstCharChange(e);
                 setUserInput(e.target.value);
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
+              onKeyDown={handleKeyPress} // Use handleKeyPress function
               rows={1}
               disabled={!isBotResponding || isLoading}
             />
